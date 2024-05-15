@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Consumo de Agua</title>
+    <style>
+        body {
+            background-color: #b3e0ff;
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('https://example.com/water-drops-background.jpg'); /* Usa tu propia URL de imagen */
+            background-size: cover;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #0077b6;
+        }
+        img {
+            width: 50px;
+            height: 50px;
+        }
+        button {
+            background-color: #ff66b2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #ff4d94;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Consumo de Agua</h1>
+        <p>Desarrollado por Ane Díez</p>
+        <div id="question-container">
+            <div class="question">
+                <img src="https://example.com/family-icon.png" alt="Personas en casa"><br>
+                <label>¿Cuántas personas vivís en casa?</label><br>
+                <input type="number" id="people" min="1" max="10"><br>
+                <button onclick="nextQuestion()">Siguiente</button>
+            </div>
+        </div>
+        <button id="calculate-button" onclick="calculateWaterUsage()" style="display:none;">Calcular Consumo</button>
+        <div id="result" style="display:none;"></div>
+    </div>
+    <script>
+        const questions = [
+            { question: "¿Con qué frecuencia te duchas a la semana?", inputId: "showers", icon: "https://example.com/shower-icon.png" },
+            { question: "¿Cuánto tardas en ducharte?", inputId: "showerTime", icon: "https://example.com/time-icon.png" },
+            { question: "¿Con qué frecuencia te bañas a la semana?", inputId: "baths", icon: "https://example.com/bath-icon.png" },
+            { question: "¿Cuántas veces al día te lavas los dientes?", inputId: "teeth", icon: "https://example.com/teeth-icon.png" },
+            { question: "¿Cuántas veces al día descargas la cisterna del inodoro aproximadamente?", inputId: "flushes", icon: "https://example.com/toilet-icon.png" },
+            { question: "¿Cuántas veces al día te lavas las manos?", inputId: "hands", icon: "https://example.com/hands-icon.png" },
+            { question: "¿Cuántas veces al día te lavas la cara?", inputId: "face", icon: "https://example.com/face-icon.png" },
+            { question: "¿Cuánta agua del grifo bebes al día?", inputId: "drinking", icon: "https://example.com/water-icon.png" },
+            { question: "¿Cuántos litros de agua utilizas para cocinar al día?", inputId: "cooking", icon: "https://example.com/cooking-icon.png" },
+            { question: "¿Con qué frecuencia utilizas la lavadora a la semana?", inputId: "laundry", icon: "https://example.com/laundry-icon.png" },
+            { question: "¿Con qué frecuencia utilizas el lavavajillas a la semana?", inputId: "dishwasher", icon: "https://example.com/dishwasher-icon.png" },
+            { question: "¿Cuántas veces al día lavas los platos a mano?", inputId: "dishes", icon: "https://example.com/dishes-icon.png" },
+            { question: "¿Cuántas veces a la semana limpias la casa?", inputId: "cleaning", icon: "https://example.com/cleaning-icon.png" },
+            { question: "¿Cuántos cubos de agua utilizas para la limpieza?", inputId: "buckets", icon: "https://example.com/bucket-icon.png" }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        function nextQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            const inputId = currentQuestion.inputId;
+            const inputValue = document.getElementById(inputId)?.value;
+            if (inputValue === "" || inputValue === undefined) {
+                alert("Por favor, responde la pregunta.");
+                return;
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                document.getElementById('calculate-button').style.display = 'block';
+                document.getElementById('question-container').style.display = 'none';
+            }
+        }
+
+        function showQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            const questionData = questions[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <div class="question">
+                    <img src="${questionData.icon}" alt="icon"><br>
+                    <label>${questionData.question}</label><br>
+                    <input type="number" id="${questionData.inputId}" min="0"><br>
+                    <button onclick="nextQuestion()">Siguiente</button>
+                </div>
+            `;
+        }
+
+        function calculateWaterUsage() {
+            const people = parseInt(document.getElementById('people').value) || 0;
+            const showers = parseInt(document.getElementById('showers').value) || 0;
+            const showerTime = parseInt(document.getElementById('showerTime').value) || 0;
+            const baths = parseInt(document.getElementById('baths').value) || 0;
+            const teeth = parseInt(document.getElementById('teeth').value) || 0;
+            const flushes = parseInt(document.getElementById('flushes').value) || 0;
+            const hands = parseInt(document.getElementById('hands').value) || 0;
+            const face = parseInt(document.getElementById('face').value) || 0;
+            const drinking = parseInt(document.getElementById('drinking').value) || 0;
+            const cooking = parseInt(document.getElementById('cooking').value) || 0;
+            const laundry = parseInt(document.getElementById('laundry').value) || 0;
+            const dishwasher = parseInt(document.getElementById('dishwasher').value) || 0;
+            const dishes = parseInt(document.getElementById('dishes').value) || 0;
+            const cleaning = parseInt(document.getElementById('cleaning').value) || 0;
+            const buckets = parseInt(document.getElementById('buckets').value) || 0;
+
+            const totalAquí tienes el código completo para tu calculadora de consumo de agua con el botón "Calcular consumo" funcionando correctamente y con los ajustes necesarios para un diseño moderno y profesional:
+
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Consumo de Agua</title>
+    <style>
+        body {
+            background-color: #b3e0ff;
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/asfalt-light.png'); /* Usa una URL de imagen de fondo de tu elección */
+            background-size: cover;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+        }
+        h1 {
+            color: #0077b6;
+        }
+        img {
+            width: 80px;
+            height: 80px;
+        }
+        button {
+            background-color: #ff66b2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #ff4d94;
+        }
+        p {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calculadora de Consumo de Agua</h1>
+        <p>Desarrollado por Ane Díez</p>
+        <div id="question-container">
+            <div class="question">
+                <img src="https://example.com/family-icon.png" alt="Personas en casa"><br>
+                <label>¿Cuántas personas vivís en casa?</label><br>
+                <input type="number" id="people" min="1" max="10"><br>
+                <button onclick="nextQuestion()">Siguiente</button>
+            </div>
+        </div>
+        <button id="calculate-button" onclick="calculateWaterUsage()" style="display:none;">Calcular Consumo</button>
+        <div id="result" style="display:none;"></div>
+    </div>
+    <script>
+        const questions = [
+            { question: "¿Con qué frecuencia te duchas a la semana?", inputId: "showers", icon: "https://example.com/shower-icon.png" },
+            { question: "¿Cuánto tardas en ducharte?", inputId: "showerTime", icon: "https://example.com/time-icon.png" },
+            { question: "¿Con qué frecuencia te bañas a la semana?", inputId: "baths", icon: "https://example.com/bath-icon.png" },
+            { question: "¿Cuántas veces al día te lavas los dientes?", inputId: "teeth", icon: "https://example.com/teeth-icon.png" },
+            { question: "¿Cuántas veces al día descargas la cisterna del inodoro aproximadamente?", inputId: "flushes", icon: "https://example.com/toilet-icon.png" },
+            { question: "¿Cuántas veces al día te lavas las manos?", inputId: "hands", icon: "https://example.com/hands-icon.png" },
+            { question: "¿Cuántas veces al día te lavas la cara?", inputId: "face", icon: "https://example.com/face-icon.png" },
+            { question: "¿Cuánta agua del grifo bebes al día?", inputId: "drinking", icon: "https://example.com/water-icon.png" },
+            { question: "¿Cuántos litros de agua utilizas para cocinar al día?", inputId: "cooking", icon: "https://example.com/cooking-icon.png" },
+            { question: "¿Con qué frecuencia utilizas la lavadora a la semana?", inputId: "laundry", icon: "https://example.com/laundry-icon.png" },
+            { question: "¿Con qué frecuencia utilizas el lavavajillas a la semana?", inputId: "dishwasher", icon: "https://example.com/dishwasher-icon.png" },
+            { question: "¿Cuántas veces al día lavas los platos a mano?", inputId: "dishes", icon: "https://example.com/dishes-icon.png" },
+            { question: "¿Cuántas veces a la semana limpias la casa?", inputId: "cleaning", icon: "https://example.com/cleaning-icon.png" },
+            { question: "¿Cuántos cubos de agua utilizas para la limpieza?", inputId: "buckets", icon: "https://example.com/bucket-icon.png" }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        function nextQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            const inputId = currentQuestion.inputId;
+            const inputValue = document.getElementById(inputId)?.value;
+            if (inputValue === "" || inputValue === undefined) {
+                alert("Por favor, responde la pregunta.");
+                return;
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                document.getElementById('calculate-button').style.display = 'block';
+                document.getElementById('question-container').style.display = 'none';
+            }
+        }
+
+        function showQuestion() {
+            const questionContainer = document.getElementById('question-container');
+            const questionData = questions[currentQuestionIndex];
+            questionContainer.innerHTML = `
+                <div class="question">
+                    <img src="${questionData.icon}" alt="icon"><br>
+                    <label>${questionData.question}</label><br>
+                    <input type="number" id="${questionData.inputId}" min="0"><br>
+                    <button onclick="nextQuestion()">Siguiente</button>
+                </div>
+            `;
+        }
+
+        function calculateWaterUsage() {
+            const people = parseInt(document.getElementById('people').value) || 0;
+            const showers = parseInt(document.getElementById('showers').value) || 0;
+            const showerTime = parseInt(document.getElementById('showerTime').value) || 0;
+            const baths = parseInt(document.getElementById('baths').value) || 0;
+            const teeth = parseInt(document.getElementById('teeth').value) || 0;
+            const flushes = parseInt(document.getElementById('flushes').value) || 0;
+            const hands = parseInt(document.getElementById('hands').value) || 0;
+            const face = parseInt(document.getElementById('face').value) || 0;
+            const drinking = parseInt(document.getElementById('drinking').value) || 0;
+            const cooking = parseInt(document.getElementById('cooking').value) || 0;
+            const laundry = parseInt(document.getElementById('laundry').value) || 0;
+            const dishwasher = parseInt(document.getElementById('dishwasher').value) || 0;
+            const dishes = parseInt(document.getElementById('dishes').value) || 0;
+            const cleaning = parseInt(document.getElementById('cleaning').value) || 0;
+            const buckets = parseInt(document.getElementById('buckets').value) || 0;
+
+            const totalUsage = (
+                (showers * showerTime * 9.5) + 
+                (baths * 80) + 
+                (teeth * 0.25) + 
+                (flushes * 9) + 
+                (hands * 0.2) + 
+                (face * 0.5) + 
+                (drinking) + 
+                (cooking * 2) + 
+                (laundry * 40) + 
+                (dishwasher * 12) + 
+                (dishes * 10) + 
+                (cleaning * buckets * 10)
+            ) * people;
+
+            let consumptionLevel = '';
+            if (totalUsage < 100) {
+                consumptionLevel = 'bajo';
+            } else if (totalUsage < 200) {
+                consumptionLevel = 'normal';
+            } else {
+                consumptionLevel = 'alto';
+            }
+
+            document.getElementById('result').innerHTML = `Tu consumo total de agua es ${totalUsage.toFixed(2)} litros, lo que es un consumo ${consumptionLevel}.`;
+            document.getElementById('result').style.display = 'block';
+        }
+
+        // Mostrar la primera pregunta al cargar la página
+        window.onload = showQuestion;
+    </script>
+</body>
+</html>
